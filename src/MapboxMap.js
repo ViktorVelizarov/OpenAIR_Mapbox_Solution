@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import './MapboxMap.css';
 
@@ -6,10 +6,12 @@ mapboxgl.accessToken = 'pk.eyJ1IjoidmlrdG9ydmVsIiwiYSI6ImNtMXA5aWRnZjAxbHQyanIwN
 
 const MapboxMap = () => {
   const mapContainerRef = useRef(null);
+  const [map, setMap] = useState(null);
+  const [isLayerVisible, setIsLayerVisible] = useState(true);
 
   useEffect(() => {
     // Initialize the map
-    const map = new mapboxgl.Map({
+    const mapInstance = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [0, 0], // Initial map center [lng, lat]
@@ -17,9 +19,8 @@ const MapboxMap = () => {
     });
 
     // Add OpenAIP raster tile source when the map is loaded
-    map.on('load', () => {
-      // Add OpenAIP source as a raster layer
-      map.addSource('openaip', {
+    mapInstance.on('load', () => {
+      mapInstance.addSource('openaip', {
         type: 'raster',
         tiles: [
           'https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=520d0bec91fa6c97e4fa33a76f531186'
@@ -30,7 +31,7 @@ const MapboxMap = () => {
       });
 
       // Add a layer to display OpenAIP raster tiles
-      map.addLayer({
+      mapInstance.addLayer({
         id: 'openaip-tiles',
         type: 'raster',
         source: 'openaip',
@@ -38,15 +39,56 @@ const MapboxMap = () => {
           'raster-opacity': 1
         }
       });
+
+      setMap(mapInstance);
     });
 
     // Cleanup on unmount
-    return () => map.remove();
+    return () => mapInstance.remove();
   }, []);
 
+  // Toggle the visibility of the OpenAIP layer
+  const toggleLayerVisibility = () => {
+    if (map) {
+      const visibility = map.getLayoutProperty('openaip-tiles', 'visibility');
+      if (visibility === 'visible') {
+        map.setLayoutProperty('openaip-tiles', 'visibility', 'none');
+        setIsLayerVisible(false);
+      } else {
+        map.setLayoutProperty('openaip-tiles', 'visibility', 'visible');
+        setIsLayerVisible(true);
+      }
+    }
+  };
+
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <div ref={mapContainerRef} className="map-container" />
+      <button
+        onClick={toggleLayerVisibility}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          backgroundColor: '#ff0000',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '5px',
+          padding: '10px 15px',
+          cursor: 'pointer',
+          fontSize: '16px',
+          zIndex: 10, // Ensure it appears above the map
+          transition: 'background-color 0.3s',
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.backgroundColor = '#cc0000'; // Darker red on hover
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.backgroundColor = '#ff0000'; // Reset to original red
+        }}
+      >
+        {isLayerVisible ? 'Hide OpenAIP Layer' : 'Show OpenAIP Layer'}
+      </button>
     </div>
   );
 };
