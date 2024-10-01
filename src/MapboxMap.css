@@ -1,0 +1,6 @@
+/* Make sure the map takes up the full viewport */
+.map-container {
+    width: 100vw;
+    height: 100vh;
+  }
+  
