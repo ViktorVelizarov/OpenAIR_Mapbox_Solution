@@ -93,4 +93,4 @@ const MapboxMap = () => {
   );
 };
 
-export default MapboxMap;
+export default MapboxMap;      
