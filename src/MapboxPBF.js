@@ -41,15 +41,15 @@ const MapboxMap = () => {
         }
       });
 
-      // 2. Airspaces (as polygons)
+      // 2. Airspaces (as borders only, no fill)
       mapInstance.addLayer({
-        id: 'airspaces',
-        type: 'fill',
+        id: 'airspaces-borders',
+        type: 'line',
         source: 'openaip-vector',
         'source-layer': 'airspaces',
         paint: {
-          'fill-color': '#00ff00',
-          'fill-opacity': 0.4
+          'line-color': '#00ff00', // Green borders (you can change the color)
+          'line-width': 2
         }
       });
 
@@ -113,18 +113,6 @@ const MapboxMap = () => {
         }
       });
 
-      // 8. RC Airfields (as points)
-      mapInstance.addLayer({
-        id: 'rc-airfields',
-        type: 'circle',
-        source: 'openaip-vector',
-        'source-layer': 'rc_airfields',
-        paint: {
-          'circle-radius': 5,
-          'circle-color': '#0000ff'
-        }
-      });
-
       setMap(mapInstance);
     });
 
@@ -138,7 +126,7 @@ const MapboxMap = () => {
       const newVisibility = visibility === 'visible' ? 'none' : 'visible';
 
       // Toggle visibility for all layers
-      const layers = ['airports', 'airspaces', 'airspaces-border-offset', 'airspaces-border-offset-2x', 'hotspots', 'navaids', 'reporting-points', 'rc-airfields'];
+      const layers = ['airports', 'airspaces-borders', 'airspaces-border-offset', 'airspaces-border-offset-2x', 'hotspots', 'navaids', 'reporting-points'];
       layers.forEach(layerId => {
         map.setLayoutProperty(layerId, 'visibility', newVisibility);
       });
