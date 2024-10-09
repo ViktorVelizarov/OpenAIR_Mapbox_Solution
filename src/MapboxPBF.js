@@ -113,19 +113,7 @@ const MapboxMap = () => {
         }
       });
 
-      // 8. Obstacles (as points)
-      mapInstance.addLayer({
-        id: 'obstacles',
-        type: 'circle',
-        source: 'openaip-vector',
-        'source-layer': 'obstacles',
-        paint: {
-          'circle-radius': 6,
-          'circle-color': '#ff00ff'
-        }
-      });
-
-      // 9. RC Airfields (as points)
+      // 8. RC Airfields (as points)
       mapInstance.addLayer({
         id: 'rc-airfields',
         type: 'circle',
@@ -150,7 +138,7 @@ const MapboxMap = () => {
       const newVisibility = visibility === 'visible' ? 'none' : 'visible';
 
       // Toggle visibility for all layers
-      const layers = ['airports', 'airspaces', 'airspaces-border-offset', 'airspaces-border-offset-2x', 'hotspots', 'navaids', 'reporting-points', 'obstacles', 'rc-airfields'];
+      const layers = ['airports', 'airspaces', 'airspaces-border-offset', 'airspaces-border-offset-2x', 'hotspots', 'navaids', 'reporting-points', 'rc-airfields'];
       layers.forEach(layerId => {
         map.setLayoutProperty(layerId, 'visibility', newVisibility);
       });

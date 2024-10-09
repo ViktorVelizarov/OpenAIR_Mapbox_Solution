@@ -1,5 +1,5 @@
 import React from 'react';
-import MapboxMap from './MapboxMap';
+import MapboxMap from './MapboxPNG';
 import MapboxPBF from './MapboxPBF';
 
 function App() {
