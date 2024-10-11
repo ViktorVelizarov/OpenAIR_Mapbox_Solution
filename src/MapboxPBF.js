@@ -28,28 +28,28 @@ const MapboxMap = () => {
         maxzoom: 14
       });
 
-      // Add all layers with appropriate settings
-      // 1. Airports (as points)
+      // 1. Airspaces (fill with red and opacity)
       mapInstance.addLayer({
-        id: 'airports',
-        type: 'circle',
-        source: 'openaip-vector',
-        'source-layer': 'airports',
-        paint: {
-          'circle-radius': 5,
-          'circle-color': '#ff0000'
-        }
-      });
-
-      // 2. Airspaces (as borders only, no fill)
-      mapInstance.addLayer({
-        id: 'airspaces-borders',
-        type: 'line',
+        id: 'airspaces-fill',
+        type: 'fill',
         source: 'openaip-vector',
         'source-layer': 'airspaces',
         paint: {
-          'line-color': '#00ff00', // Green borders (you can change the color)
-          'line-width': 2
+          'fill-color': '#ff0000', // Red fill
+          'fill-opacity': 0.3 // Semi-transparent
+        }
+      });
+
+      // 2. Airspaces Border Offset 2x (as thinner pink lines)
+      mapInstance.addLayer({
+        id: 'airspaces-border-offset-2x',
+        type: 'line',
+        source: 'openaip-vector',
+        'source-layer': 'airspaces_border_offset_2x',
+        paint: {
+          'line-color': '#ff1493', // Pink color
+          'line-width': 0.5, // Even thinner lines
+          'line-opacity': 0.7 // Somewhat transparent
         }
       });
 
@@ -65,54 +65,6 @@ const MapboxMap = () => {
         }
       });
 
-      // 4. Airspaces Border Offset 2x (as lines)
-      mapInstance.addLayer({
-        id: 'airspaces-border-offset-2x',
-        type: 'line',
-        source: 'openaip-vector',
-        'source-layer': 'airspaces_border_offset_2x',
-        paint: {
-          'line-color': '#ff00ff',
-          'line-width': 3
-        }
-      });
-
-      // 5. Hotspots (as points)
-      mapInstance.addLayer({
-        id: 'hotspots',
-        type: 'circle',
-        source: 'openaip-vector',
-        'source-layer': 'hotspots',
-        paint: {
-          'circle-radius': 4,
-          'circle-color': '#ff0000'
-        }
-      });
-
-      // 6. Navaids (as points)
-      mapInstance.addLayer({
-        id: 'navaids',
-        type: 'circle',
-        source: 'openaip-vector',
-        'source-layer': 'navaids',
-        paint: {
-          'circle-radius': 4,
-          'circle-color': '#ff9900'
-        }
-      });
-
-      // 7. Reporting Points (as points)
-      mapInstance.addLayer({
-        id: 'reporting-points',
-        type: 'circle',
-        source: 'openaip-vector',
-        'source-layer': 'reporting_points',
-        paint: {
-          'circle-radius': 3,
-          'circle-color': '#ffff00'
-        }
-      });
-
       setMap(mapInstance);
     });
 
@@ -122,11 +74,11 @@ const MapboxMap = () => {
   // Toggle the visibility of the OpenAIP layers
   const toggleLayerVisibility = () => {
     if (map) {
-      const visibility = map.getLayoutProperty('airports', 'visibility');
+      const visibility = map.getLayoutProperty('airspaces-fill', 'visibility');
       const newVisibility = visibility === 'visible' ? 'none' : 'visible';
 
-      // Toggle visibility for all layers
-      const layers = ['airports', 'airspaces-borders', 'airspaces-border-offset', 'airspaces-border-offset-2x', 'hotspots', 'navaids', 'reporting-points'];
+      // Toggle visibility for the remaining layers
+      const layers = ['airspaces-fill', 'airspaces-border-offset', 'airspaces-border-offset-2x'];
       layers.forEach(layerId => {
         map.setLayoutProperty(layerId, 'visibility', newVisibility);
       });
